@@ -2,7 +2,7 @@
 ## 简介
 > 爬取推特的账号信息与动态信息 
 
-List：
+TODO List：
 
 - [x] 推文动态（推文文本、转发量、评论量、点赞量）
 - [x] 账号信息（followers和following数量）
