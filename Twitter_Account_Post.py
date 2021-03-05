@@ -14,7 +14,9 @@ import json
 import crawlertool as tool
 from multiprocessing.dummy import Pool  # 线程池
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 import datetime
+
 class SpiderTwitterAccountPost(tool.abc.SingleSpider):
     """
     Twitter账号推文爬虫
@@ -71,11 +73,16 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
         time.sleep(3)
 
         # 判断是否该账号在指定时间范围内没有发文
+        tweet_exist = True
         #label_test = self.driver.find_element_by_css_selector("main > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div > div")
-        label_test=self.driver.find_element_by_css_selector("main>div>div>div>div>div>div:nth-child(2) >div>div>div>div:nth-child(2) ")
+        try:
+            label_test = self.driver.find_element_by_css_selector("main>div>div>div>div>div>div:nth-child(2) >div>div>div>div:nth-child(2) ")
+            tweet_exist = False
+        except NoSuchElementException:
+            print("tweets of {} found".format(user_name))
 
-        if "你输入的词没有找到任何结果" in label_test.text:
-            print("Nothing")
+        if not tweet_exist:
+            print("tweet of {} not found".format(user_name))
             return item_list
 
         # 定位标题外层标签
