@@ -77,7 +77,9 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
         #label_test = self.driver.find_element_by_css_selector("main > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div > div")
         try:
             label_test = self.driver.find_element_by_css_selector("main>div>div>div>div>div>div:nth-child(2) >div>div>div>div:nth-child(2) ")
-            tweet_exist = False
+            if "你输入的词没有找到任何结果" in label_test.text:
+                print("test success")
+                tweet_exist = False
         except NoSuchElementException:
             print("tweets of {} found".format(user_name))
 
