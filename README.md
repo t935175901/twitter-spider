@@ -8,7 +8,7 @@ TODO List：
 - [x] 账号信息（followers和following数量）
 - [ ] 转发推文及来源
 - [ ] 推文评论信息
-- [ ] followers与following列表
+- [×] followers与following列表
 
 ## 使用
 需要下载并配置chromedriver.exe
