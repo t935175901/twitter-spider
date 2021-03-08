@@ -27,3 +27,4 @@ def get_twitter_user_name(page_url: str) -> str:
     """
     if pattern := re.search(r"(?<=twitter.com/)[^/]+", page_url):
         return pattern.group()
+    return page_url
