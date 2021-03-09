@@ -6,7 +6,7 @@ TODO List：
 
 - [x] 推文动态（推文文本、转发量、评论量、点赞量）
 - [x] 账号信息（followers和following数量）
-- [ ] 转发推文及来源
+- [x] 转发推文及来源
 - [ ] 推文评论信息
 - [x] following列表
 
