@@ -4,6 +4,7 @@ import crawlertool as tool
 from multiprocessing.dummy import Pool  # 线程池
 from selenium import webdriver
 from config import *
+import os
 
 
 class SpiderTwitterAccountFollowList(tool.abc.SingleSpider):
@@ -27,7 +28,7 @@ class SpiderTwitterAccountFollowList(tool.abc.SingleSpider):
 
         # 打开目标Url
         self.driver.get(following_url)
-        time.sleep(1.5)
+        time.sleep(2)
 
         # 定位标题外层标签
         label_outer = self.driver.find_element_by_css_selector(
@@ -55,18 +56,22 @@ class SpiderTwitterAccountFollowList(tool.abc.SingleSpider):
                 time.sleep(1.5)
             else:
                 break
-        fp = open('twitter_following_{}.json'.format(user_name), 'w', encoding='utf-8')
-        json.dump({"user_name":user_name,"following":list(following_set)}, fp=fp, ensure_ascii=False)
+        return {"user_name":user_name,"following":list(following_set)}
 
 def run(user_name):
     driver = webdriver.Chrome()
     login(driver, email, password)
     following_url = "https://twitter.com/{}/following".format(user_name)
     driver.get(following_url)
-    print("Start collecting {}'s following list:".format(user_name))
-    SpiderTwitterAccountFollowList(driver).running(user_name)
+    print("Start collecting following list of {}:".format(user_name))
+    path = os.path.join(datadir, "following")
+    if not os.path.isdir(path):
+        os.mkdir(path)
+    fp = open(os.path.join(path, '{}_following.json'.format(user_name)), 'w', encoding='utf-8')
+    json.dump(SpiderTwitterAccountFollowList(driver).running(user_name), fp=fp, ensure_ascii=False)
     print("Collection complete\n")
     driver.quit()
+
 
 # ------------------- 单元测试 -------------------
 # driver = webdriver.Chrome()
@@ -77,7 +82,9 @@ if __name__ == "__main__":
     with open(file_path, "r") as fp:  # 读取待爬取用户用户名
         for line in fp:
             user_names.append(get_twitter_user_name(line.strip()))
-    pool = Pool(num)
+    if not os.path.isdir(datadir):
+        os.mkdir(datadir)
+    pool = Pool(pool_size)
     #池子太大导致频繁登录极易被发现而登录异常，解决方法之一是仅开一个driver只登录一次但必须依次线性爬取
     pool.map(run, user_names)
     pool.close()

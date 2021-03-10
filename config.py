@@ -1,4 +1,5 @@
 import time
+import datetime
 import re
 from selenium.webdriver.common.keys import Keys
 email = "ty_enh"
@@ -7,8 +8,12 @@ password = "ty20000924"
 #密码
 file_path="user_names.txt"
 #待爬取用户文件路径
-num=2
+pool_size=2
 #线程池大小
+since_date = datetime.date(2021, 3, 6)
+until_date = datetime.date(2021, 3, 11)
+#统计开始结束时间
+datadir="data"
 
 def login (driver, email, password):
     driver.get("https://twitter.com/login")
