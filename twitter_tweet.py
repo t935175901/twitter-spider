@@ -17,6 +17,9 @@ from selenium.common.exceptions import NoSuchElementException
 from config import *
 import datetime
 
+class Getoutofloop(Exception):
+    pass
+
 class SpiderTwitterAccountPost(tool.abc.SingleSpider):
     """
     Twitter账号推文爬虫
@@ -38,6 +41,8 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
 
         self.user_name = user_name
         item_list = []
+        tweet_num = 0
+        retweet_num = 0
 
         # 生成请求的Url
         query_sentence = []
@@ -98,6 +103,7 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                     continue
 
                 tweet_id_set.add(item["tweet_id"])
+                tweet_num += 1
                 last_label_tweet = label_tweet
 
                 # 解析推文发布时间
@@ -109,10 +115,21 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                     item["time"] = timeRec.strftime("%Y-%m-%d %H:%M:%S")
                     #消除时区偏差+8h
 
-                # 解析推文内容
-                if label := label_tweet.find_element_by_css_selector(
-                        "article > div > div > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1)"):
-                    item["text"] = label.text
+                # 判断是推文还是回复
+                    if label := label_tweet.find_element_by_css_selector(
+                            "article > div > div > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1)"):
+                        if "回复" in label.text and "@" in label.text:
+                            # 解析回复内容
+                            item["reply_to"] = label.text.replace("回复", "")
+                            item["reply_to"] = item["reply_to"].replace("@", "")
+                            item["reply_to"] = item["reply_to"].replace(" ", "")
+                            item["reply_to"] = item["reply_to"].replace("\n", "").replace("\r", "")
+                            if label2 := label_tweet.find_element_by_css_selector(
+                                    "article > div > div > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2)"):
+                                item["text"] = label2.text
+                        else:
+                            # 解析推文内容
+                            item["text"] = label.text
 
                 item["replies"] = 0  # 推文回复数
                 item["retweets"] = 0  # 推文转推数
@@ -144,6 +161,7 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
             else:
                 break
 
+        # 判断转推
         params['q'] = params['q'] + " filter:nativeretweets"
         actual_url = "https://twitter.com/search?" + parse.urlencode(params)
         self.console("实际请求Url:" + actual_url)
@@ -164,12 +182,22 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
 
         if not tweet_exist:
             print("retweet of {} not found".format(user_name))
+            count = {"tweet_num": tweet_num, "retweet_num": retweet_num}
+            item_list.append(count)
+
+            end = time.time()
+            print("speed:{}/s".format(len(item_list) / (end - start)))
+            fp = open('twitter_{}_{}_{}.json'.format(user_name, since_date, until_date), 'w', encoding='utf-8')
+            json.dump(item_list, fp=fp, ensure_ascii=False)
+            print("{} is done".format(user_name))
             return item_list
+
         # 定位标题外层标签
         label_outer = self.driver.find_element_by_css_selector(
             "main > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div > div > section > div > div")
         self.driver.execute_script("arguments[0].id = 'outer';", label_outer)  # 设置标题外层标签的ID
         start = time.time()
+
         # 循环遍历外层标签
         tweet_id_set = set()
         for _ in range(1000):
@@ -195,6 +223,7 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                     continue
 
                 tweet_id_set.add(item["tweet_id"])
+                retweet_num += 1
                 last_label_tweet = label_tweet
 
                 # 解析推文来源
@@ -248,8 +277,8 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                 time.sleep(1.5)
             else:
                 break
-
-
+        count = {"tweet_num": tweet_num, "retweet_num": retweet_num}
+        item_list.append(count)
 
         end=time.time()
         print("speed:{}/s".format(len(item_list)/(end-start)))
