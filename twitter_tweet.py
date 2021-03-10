@@ -2,7 +2,7 @@
 
 """
 Twitter账号推文爬虫
-@Update: 2020.10.23
+@Update: 2021.03.10
 """
 
 
@@ -62,7 +62,6 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
         try:
             label_test = self.driver.find_element_by_css_selector("main>div>div>div>div>div>div:nth-child(2) >div>div>div>div:nth-child(2) ")
             if "你输入的词没有找到任何结果" in label_test.text:
-                print("test success")
                 tweet_exist = False
         except NoSuchElementException:
             print("tweets of {} found".format(user_name))
@@ -159,7 +158,6 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
             label_test = self.driver.find_element_by_css_selector(
                 "main>div>div>div>div>div>div:nth-child(2) >div>div>div>div:nth-child(2) ")
             if "你输入的词没有找到任何结果" in label_test.text:
-                print("test success")
                 tweet_exist = False
         except NoSuchElementException:
             print("retweets of {} found".format(user_name))
@@ -265,6 +263,7 @@ def run(x):
     print("Start collecting tweets from {}:".format(x[0]))
     return SpiderTwitterAccountPost(driver).running(x[0], x[1], x[2])
     print("Collection complete\n")
+
 # ------------------- 单元测试 -------------------
 if __name__ == "__main__":
     user_names = []
@@ -273,7 +272,7 @@ if __name__ == "__main__":
             user_names.append(get_twitter_user_name(line.strip()))
     driver = webdriver.Chrome()
     since_date = datetime.date(2021, 3, 6)
-    until_date = datetime.date(2021, 3, 8)
+    until_date = datetime.date(2021, 3, 11)
     combe = lambda urls_list, since_date, until_date: list(zip(urls_list, [since_date] * num, [until_date] * num))
     pool = Pool(num)
     pool.map(run, combe(user_names, since_date, until_date))
