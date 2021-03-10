@@ -47,8 +47,9 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
         # 生成请求的Url
         query_sentence = []
         query_sentence.append("from:%s" % user_name)  # 搜索目标用户发布的推文
-        if since_date is not None:
+        if since_date != "":
             query_sentence.append("since:%s" % str(since_date))  # 设置开始时间
+        if until_date != "":
             query_sentence.append("until:%s" % str(until_date))  # 设置结束时间
         query = " ".join(query_sentence)  # 计算q(query)参数的值
         params = {
@@ -300,8 +301,10 @@ if __name__ == "__main__":
         for line in fp:
             user_names.append(get_twitter_user_name(line.strip()))
     driver = webdriver.Chrome()
-    since_date = datetime.date(2021, 3, 6)
-    until_date = datetime.date(2021, 3, 11)
+    # since_date = datetime.date(2021, 3, 6)
+    # until_date = datetime.date(2021, 3, 11)
+    since_date = ""
+    until_date = ""
     combe = lambda urls_list, since_date, until_date: list(zip(urls_list, [since_date] * num, [until_date] * num))
     pool = Pool(num)
     pool.map(run, combe(user_names, since_date, until_date))
