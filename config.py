@@ -8,13 +8,15 @@ password = "ty20000924"
 #密码
 file_path="user_names.txt"
 #待爬取用户文件路径
-pool_size=2
+pool_size=1
 #线程池大小
-since_date = datetime.date(2021, 3, 6)
-until_date = datetime.date(2021, 3, 11)
+since_date = datetime.date(2021, 3, 1)
+until_date = datetime.date(2021, 3, 9)
 #统计开始结束时间
 datadir="data"
-
+#数据文件夹
+update_interval=60*10
+#更新时间间隔（s）
 def login (driver, email, password):
     driver.get("https://twitter.com/login")
     driver.find_element_by_name('session[username_or_email]').send_keys(email)

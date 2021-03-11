@@ -43,8 +43,9 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
         query_sentence = []
         query_sentence.append("from:%s" % user_name)  # 搜索目标用户发布的推文
         if since_date is not None:
-            query_sentence.append("since:%s" % str(since_date))  # 设置开始时间
-            query_sentence.append("until:%s" % str(until_date))  # 设置结束时间
+                query_sentence.append("since:%s" % str(since_date))  # 设置开始时间
+                if (since_date - until_date).days<0:
+                    query_sentence.append("until:%s" % str(until_date))  # 设置结束时间
         query = " ".join(query_sentence)  # 计算q(query)参数的值
         params = {
             "q": query,
@@ -171,16 +172,20 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
         #print("{} is done".format(user_name))
         return item_list
 
-def run(user_name):
+def run(x):
+    #x=
+    # user_name,
+    # since_date,
+    # until_date]
     driver = webdriver.Chrome()
     data=[]
-    print("Start collecting tweets from {}:".format(user_name))
-    data+=SpiderTwitterAccountPost(driver).running(user_name, since_date,until_date)
-    data+=SpiderTwitterAccountPost(driver).running(user_name, since_date,until_date,ifretweet=True)
+    print("Start collecting tweets from {}:".format(x[0]))
+    data += SpiderTwitterAccountPost(driver).running(x[0], x[1], x[2])
+    data += SpiderTwitterAccountPost(driver).running(x[0], x[1], x[2], ifretweet=True)
     path=os.path.join(datadir,"tweet")
     if not os.path.isdir(path):
         os.mkdir(path)
-    fp = open(os.path.join(path,'{}_{}_{}.json'.format(user_name, since_date, until_date)), 'w', encoding='utf-8')
+    fp = open(os.path.join(path,'{}_{}_{}.json'.format(x[0], x[1], x[2])), 'w', encoding='utf-8')
     json.dump(data, fp=fp, ensure_ascii=False)
     print("Collection complete\n")
 
@@ -194,6 +199,7 @@ if __name__ == "__main__":
     if not os.path.isdir(datadir):
         os.mkdir(datadir)
     pool = Pool(pool_size)
-    pool.map(run, user_names)
+    combe = lambda user_names, since_date, until_date: list(zip(user_names, [since_date] * len(user_names), [until_date] * len(user_names)))
+    pool.map(run, combe(user_names,since_date,until_date))
     pool.close()
     pool.join()
