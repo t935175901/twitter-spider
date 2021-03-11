@@ -9,8 +9,9 @@ TODO List：
 - [x] 转发推文及来源
 - [x] 推文评论信息
 - [x] following列表
-- [ ] 实时更新
+- [x] 实时更新
 
 
 ## 使用
 需要下载并配置chromedriver.exe
+需先运行twitter_tweet.py获取历史推文后才能使用Liveupdate.py进行更新
