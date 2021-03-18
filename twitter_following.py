@@ -23,16 +23,19 @@ class SpiderTwitterAccountFollowList(tool.abc.SingleSpider):
         """
         self.user_name = user_name
         # 生成请求的Url
-        # follower_url="https://twitter.com/{}/followers".format(user_name)
-        following_url = "https://twitter.com/{}/following".format(user_name)
+        following_url = "https://twitter.com/{}/followers_you_follow".format(user_name)
 
         # 打开目标Url
         self.driver.get(following_url)
-        time.sleep(2)
+        time.sleep(3)
 
         # 定位标题外层标签
-        label_outer = self.driver.find_element_by_css_selector(
-            "main>div>div>div>div>div>div:nth-child(2)>section>div>div")
+        try:
+            label_outer = self.driver.find_element_by_css_selector(" main > div > div > div > div > div >"
+                                                               " div:nth-child(2) > section > div > div")
+        except:
+            print("Find nothing")
+            return {"user_name": user_name, "following": []}
         # 循环遍历外层标签
         following_set = set()
         for _ in range(1000):
@@ -59,23 +62,19 @@ class SpiderTwitterAccountFollowList(tool.abc.SingleSpider):
         return {"user_name":user_name,"following":list(following_set)}
 
 def run(user_name):
-    driver = webdriver.Chrome()
-    login(driver, email, password)
-    following_url = "https://twitter.com/{}/following".format(user_name)
-    driver.get(following_url)
     print("Start collecting following list of {}:".format(user_name))
     path = os.path.join(datadir, "following")
     if not os.path.isdir(path):
         os.mkdir(path)
     fp = open(os.path.join(path, '{}_following.json'.format(user_name)), 'w', encoding='utf-8')
     json.dump(SpiderTwitterAccountFollowList(driver).running(user_name), fp=fp, ensure_ascii=False)
-    print("Collection complete\n")
-    driver.quit()
+    print("Collection complete")
+
 
 
 # ------------------- 单元测试 -------------------
-# driver = webdriver.Chrome()
-# login(driver, email, password)
+driver = webdriver.Chrome()
+login(driver, email, password)
 #解决办法：并去掉run中该部分
 if __name__ == "__main__":
     user_names = []
@@ -84,7 +83,7 @@ if __name__ == "__main__":
             user_names.append(get_twitter_user_name(line.strip()))
     if not os.path.isdir(datadir):
         os.mkdir(datadir)
-    pool = Pool(pool_size)
+    pool = Pool(1)
     #池子太大导致频繁登录极易被发现而登录异常，解决方法之一是仅开一个driver只登录一次但必须依次线性爬取
     pool.map(run, user_names)
     pool.close()
