@@ -18,10 +18,8 @@ def run(x):
     # until_date,
     # ]
     driver = webdriver.Chrome()
-    today = datetime.date.today()
     old_data=[]
-    old_data += tw.SpiderTwitterAccountPost(driver).running(x[0], x[2],today)
-    old_data += tw.SpiderTwitterAccountPost(driver).running(x[0], x[2],today, ifretweet=True)
+    old_data += tw.SpiderTwitterAccountPost(driver).running(x[0], x[2])
 
     fp=open(os.path.join(tweet_dir,'{}_{}_{}.json'.format(x[0],x[1],x[2])), 'r', encoding='utf-8')
     old_data+=json.load(fp)

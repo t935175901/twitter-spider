@@ -2,22 +2,17 @@
 
 """
 Twitter账号推文爬虫
-@Update: 2021.03.10
+@Update: 2021.03.21
 """
 
-
-
-from urllib import parse
 import json
 import crawlertool as tool
 from multiprocessing.dummy import Pool  # 线程池
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 from config import *
 import datetime
 import os
-class Getoutofloop(Exception):
-    pass
+
 class SpiderTwitterAccountPost(tool.abc.SingleSpider):
     """
     Twitter账号推文爬虫
@@ -27,61 +22,35 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
         # 爬虫实例的变量
         self.user_name = None
 
-    def running(self, user_name: str, since_date, until_date,ifretweet=False):
+    def running(self, user_name: str, since_date):
         """执行Twitter账号推文爬虫
         :param user_name: twitter账号主页名称（可以通过get_facebook_user_name获取）
         :param since_date: 抓取时间范围的右侧边界（最早日期）
-        :param until_date: 抓取时间范围的左侧边界（最晚日期）
         :return: 推文信息列表
         """
-
         self.user_name = user_name
         item_list = []
-        tweet_num = 0
-        retweet_num = 0
-        # 生成请求的Url
-        query_sentence = []
-        query_sentence.append("from:%s" % user_name)  # 搜索目标用户发布的推文
-        if since_date is not None:
-                query_sentence.append("since:%s" % str(since_date))  # 设置开始时间
-                if (since_date - until_date).days<0:
-                    query_sentence.append("until:%s" % str(until_date))  # 设置结束时间
-        query = " ".join(query_sentence)  # 计算q(query)参数的值
-        params = {
-            "q": query,
-            "f": "live"
-        }
-        if ifretweet:
-            params['q'] = params['q'] + " filter:nativeretweets"
-        actual_url = "https://twitter.com/search?" + parse.urlencode(params)
-        self.console("实际请求Url:" + actual_url)
-
-        # 打开目标Url
+        actual_url="https://twitter.com/{}/with_replies".format(self.user_name)
         self.driver.get(actual_url)
-        time.sleep(1.5)
-
-        # 判断是否该账号在指定时间范围内没有发文
-        tweet_exist = True
+        time.sleep(3)
         try:
-            label_test = self.driver.find_element_by_css_selector("main>div>div>div>div>div>div:nth-child(2) >div>div>div>div:nth-child(2) ")
-            if "你输入的词没有找到任何结果" in label_test.text:
-                tweet_exist = False
-        except NoSuchElementException:
-            print("tweets of {} found".format(user_name))
-        if not tweet_exist:
-            print("tweet of {} not found".format(user_name))
-            return item_list
+            while (1):
+                tryagain = self.driver.find_element_by_css_selector(
+                    "main>div>div> div> div> div> div:nth-child(2)> div> div> div> div> span")
+                if "出错了" in tryagain.text:
+                    self.driver.get(actual_url)
+                    time.sleep(3)
+                else:
+                    break
+        except:
+            pass
 
-        # 定位标题外层标签
-        label_outer = self.driver.find_element_by_css_selector(
-            "main > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div > div > section > div > div")
-        self.driver.execute_script("arguments[0].id = 'outer';", label_outer)  # 设置标题外层标签的ID
-        start=time.time()
+
         # 循环遍历外层标签
         tweet_id_set = set()
         for _ in range(1000):
             last_label_tweet = None
-            for label_tweet in label_outer.find_elements_by_xpath('//*[@id="outer"]/div'):  # 定位到推文标签
+            for label_tweet in self.driver.find_elements_by_xpath('//*[@data-testid="tweet"]'):  # 定位到推文标签
 
                 item = {}
                 try:label = label_tweet.find_element_by_css_selector(
@@ -101,7 +70,6 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                     continue
 
                 tweet_id_set.add(item["tweet_id"])
-                tweet_num += 1
                 last_label_tweet = label_tweet
 
                 # 解析推文来源,判断转推与否
@@ -156,20 +124,19 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                             elif "喜欢" in feedback_item:
                                 if pattern := re.search("[0-9]+", feedback_item):
                                     item["likes"] = int(pattern.group())
-
+                if (timeRec.date()-since_date).days<0 and item["retweet_from"]==self.user_name:
+                    return item_list
+                #if item["retweet_from"] !=self.user_name:
                 item_list.append(item)
 
+
             # 向下滚动到最下面的一条推文
-            if last_label_tweet is not None:
+            if last_label_tweet is not None :
                 self.driver.execute_script("arguments[0].scrollIntoView();", last_label_tweet)  # 滑动到推文标签
-                self.console("执行一次向下翻页...")
+                #self.console("执行一次向下翻页...")
                 time.sleep(1.5)
             else:
                 break
-
-        #end=time.time()
-        #print("speed:{}/s".format(len(item_list)/(end-start)))
-        #print("{} is done".format(user_name))
         return item_list
 
 def run(x):
@@ -178,15 +145,24 @@ def run(x):
     # since_date,
     # until_date]
     driver = webdriver.Chrome()
+    driver.maximize_window() #maximize_window()
     data=[]
     print("Start collecting tweets from {}:".format(x[0]))
-    data += SpiderTwitterAccountPost(driver).running(x[0], x[1], x[2])
-    data += SpiderTwitterAccountPost(driver).running(x[0], x[1], x[2], ifretweet=True)
+    while(1):#重试，但貌似没什么用
+        try:
+            data += SpiderTwitterAccountPost(driver).running(x[0], x[1])
+            break
+        except:
+            pass
+    driver.quit()
+
     path=os.path.join(datadir,"tweet")
     if not os.path.isdir(path):
         os.mkdir(path)
-    fp = open(os.path.join(path,'{}_{}_{}.json'.format(x[0], x[1], x[2])), 'w', encoding='utf-8')
+    fp = open(os.path.join(path,'{}_{}_{}.json'.format(x[0], x[1],today)), 'w', encoding='utf-8')
     json.dump(data, fp=fp, ensure_ascii=False)
+    fp.flush()
+    fp.close()
     print("Collection complete\n")
 
 
@@ -199,7 +175,7 @@ if __name__ == "__main__":
     if not os.path.isdir(datadir):
         os.mkdir(datadir)
     pool = Pool(pool_size)
-    combe = lambda user_names, since_date, until_date: list(zip(user_names, [since_date] * len(user_names), [until_date] * len(user_names)))
-    pool.map(run, combe(user_names,since_date,until_date))
+    combe = lambda user_names, since_date: list(zip(user_names, [since_date] * len(user_names)))
+    pool.map(run, combe(user_names,since_date))
     pool.close()
     pool.join()
