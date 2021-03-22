@@ -144,8 +144,6 @@ def run(x):
     # user_name,
     # since_date,
     # until_date]
-    driver = webdriver.Chrome()
-    driver.maximize_window() #maximize_window()
     data=[]
     print("Start collecting tweets from {}:".format(x[0]))
     while(1):#重试，但貌似没什么用
@@ -154,24 +152,37 @@ def run(x):
             break
         except:
             pass
-    driver.quit()
-
+    #driver.quit()
     path=os.path.join(datadir,"tweet")
     if not os.path.isdir(path):
         os.mkdir(path)
-    fp = open(os.path.join(path,'{}_{}_{}.json'.format(x[0], x[1],today)), 'w', encoding='utf-8')
-    json.dump(data, fp=fp, ensure_ascii=False)
-    fp.flush()
-    fp.close()
+    file_path=os.path.join(path,'{}_{}_{}.json'.format(x[0], x[1],today))
+
+
+    while(1):
+        try:
+            fw = open(file_path, 'w', encoding='utf-8')
+            json.dump(data, fp=fw, ensure_ascii=False)
+            fw.close()
+            fr = open(file_path, 'r', encoding='utf-8')
+            json.load(fr)
+            #为了验证文件完整性
+            fr.close()
+            break
+        except:
+            pass
     print("Collection complete\n")
 
-
+driver = webdriver.Chrome()
+driver.implicitly_wait(7)
+#所有元素最多等待7s
 # ------------------- 单元测试 -------------------
 if __name__ == "__main__":
     user_names = []
     with open(file_path, "r") as fp:  # 读取待爬取用户用户名
         for line in fp:
             user_names.append(get_twitter_user_name(line.strip()))
+    fp.close()
     if not os.path.isdir(datadir):
         os.mkdir(datadir)
     pool = Pool(pool_size)
