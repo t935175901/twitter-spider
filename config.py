@@ -11,8 +11,11 @@ file_path="user_names.txt"
 pool_size=1
 #线程池大小
 since_date = datetime.date(2021, 1, 1)
+until_date = datetime.date.today() + datetime.timedelta(days=1)
 today = datetime.date.today()
 #统计开始结束时间
+keyword = "pineapple"
+#搜索关键词
 datadir="data"
 #数据文件夹
 update_interval=60*10
