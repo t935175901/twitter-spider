@@ -5,14 +5,14 @@ Twitter账号推文爬虫
 @Update: 2021.03.21
 """
 
-import json
 import crawlertool as tool
 from multiprocessing.dummy import Pool  # 线程池
 from selenium import webdriver
 from config import *
 import datetime
 import os
-
+from openpyxl import workbook  # 写入Excel表所用
+flags=[]#标识是否爬取成功
 class SpiderTwitterAccountPost(tool.abc.SingleSpider):
     """
     Twitter账号推文爬虫
@@ -28,37 +28,40 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
         :param since_date: 抓取时间范围的右侧边界（最早日期）
         :return: 推文信息列表
         """
+        flag=False#判断搜索完全与否
         self.user_name = user_name
         item_list = []
         actual_url="https://twitter.com/{}/with_replies".format(self.user_name)
         self.driver.get(actual_url)
         time.sleep(3)
-        try:
-            while (1):
-                tryagain = self.driver.find_element_by_css_selector(
-                    "main>div>div> div> div> div> div:nth-child(2)> div> div> div> div> span")
-                if "出错了" in tryagain.text:
-                    self.driver.get(actual_url)
-                    time.sleep(3)
-                else:
-                    break
-        except:
-            pass
+        while (1):
+            try:
+                temp=self.driver.find_elements_by_xpath('//*[@data-testid="tweet"]')
+                break
+            except:
+                self.driver.refresh()
+                time.sleep(3)
+                pass
 
 
         # 循环遍历外层标签
         tweet_id_set = set()
-        for _ in range(1000):
+        while(1):
             last_label_tweet = None
-            for label_tweet in self.driver.find_elements_by_xpath('//*[@data-testid="tweet"]'):  # 定位到推文标签
+            while(1):
+                try:
+                    temp=self.driver.find_elements_by_xpath('//*[@data-testid="tweet"]')
+                    break
+                except:
+                    time.sleep(1)
+            for label_tweet in temp:  # 定位到推文标签
 
                 item = {}
-                try:label = label_tweet.find_element_by_css_selector(
+                label = label_tweet.find_element_by_css_selector(
                     "article > div > div > div > div:nth-child(2) > div:"
                     "nth-child(2) > div:nth-child(1) > div > div > div:nth-child(1) > a")
                 # 读取推文ID
-                except:
-                    break
+
                 if pattern := re.search("[0-9]+$", label.get_attribute("href")):
                     item["tweet_id"] = pattern.group()
                 if "tweet_id" not in item:
@@ -105,12 +108,11 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                     else:
                         # 解析推文内容
                         item["text"] = label.text
-
                 # 爬取推文图片
                 item["images"] = ""
                 image_url = ""
 
-                # 定位图片外层标签
+                    # 定位图片外层标签
                 lable_image = label_tweet.find_elements_by_xpath('.//img[@alt="图像"]')
                 for image in lable_image:
                     try:
@@ -119,8 +121,7 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                             image_url += ' '
                             item["images"] += image_url
                     except:
-                        break
-
+                        pass
                 item["replies"] = 0  # 推文回复数
                 item["retweets"] = 0  # 推文转推数
                 item["likes"] = 0  # 推文喜欢数
@@ -141,57 +142,48 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                                 if pattern := re.search("[0-9]+", feedback_item):
                                     item["likes"] = int(pattern.group())
                 if (timeRec.date()-since_date).days<0 and item["retweet_from"]==self.user_name:
-                    return item_list
+                    return item_list,True
                 #if item["retweet_from"] !=self.user_name:
                 item_list.append(item)
 
-
+            last_label_tweet = label_tweet
             # 向下滚动到最下面的一条推文
             if last_label_tweet is not None :
                 self.driver.execute_script("arguments[0].scrollIntoView();", last_label_tweet)  # 滑动到推文标签
-                #self.console("执行一次向下翻页...")
-                time.sleep(1.5)
+                #print("执行一次向下翻页...",self.user_name,len(item_list))
+                time.sleep(2)
             else:
+                flag=True
+                print(item["time"])
                 break
-        return item_list
+        return item_list,flag
 
 def run(x):
     #x=
     # user_name,
     # since_date,
     # until_date]
-    data=[]
+    driver = webdriver.Chrome()
+    datas=[]
     print("Start collecting tweets from {}:".format(x[0]))
-    while(1):#重试，但貌似没什么用
-        try:
-            data += SpiderTwitterAccountPost(driver).running(x[0], x[1])
-            break
-        except:
-            pass
-    #driver.quit()
+    wb = workbook.Workbook()  # 创建Excel对象
+    ws = wb.active  # 获取当前正在操作的表对象
+    # 往表中写入标题行,以列表形式写入！
+    ws.append(["tweet_id", "retweet_from","time","reply_to","text","replies","retweets", "likes","images"])
+    datas,flag = SpiderTwitterAccountPost(driver).running(x[0], x[1])
+    flags.append(flag)
+    for data in datas:
+        ws.append([data["tweet_id"],data["retweet_from"],data["time"],data["reply_to"],data["text"],data["replies"],data["retweets"],data["likes"],data["images"]])
+    driver.quit()
     path=os.path.join(datadir,"tweet")
     if not os.path.isdir(path):
         os.mkdir(path)
-    file_path=os.path.join(path,'{}_{}_{}.json'.format(x[0], x[1],today))
-
-
-    while(1):
-        try:
-            fw = open(file_path, 'w', encoding='utf-8')
-            json.dump(data, fp=fw, ensure_ascii=False)
-            fw.close()
-            fr = open(file_path, 'r', encoding='utf-8')
-            json.load(fr)
-            #为了验证文件完整性
-            fr.close()
-            break
-        except:
-            pass
+    file_path=os.path.join(path,'{}_{}_{}.xlsx'.format(x[0], x[1],today))
+    wb.save(file_path)
     print("Collection complete\n")
 
-driver = webdriver.Chrome()
-driver.implicitly_wait(7)
-#所有元素最多等待7s
+
+
 # ------------------- 单元测试 -------------------
 if __name__ == "__main__":
     user_names = []
@@ -206,3 +198,6 @@ if __name__ == "__main__":
     pool.map(run, combe(user_names,since_date))
     pool.close()
     pool.join()
+    print(flags)
+
+
