@@ -33,7 +33,7 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
         item_list = []
         actual_url="https://twitter.com/{}/with_replies".format(self.user_name)
         self.driver.get(actual_url)
-        time.sleep(3)
+        time.sleep(6)
         while (1):
             try:
                 temp=self.driver.find_elements_by_xpath('//*[@data-testid="tweet"]')
@@ -141,12 +141,12 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                             elif "喜欢" in feedback_item:
                                 if pattern := re.search("[0-9]+", feedback_item):
                                     item["likes"] = int(pattern.group())
-                if (timeRec.date()-since_date).days<0 and item["retweet_from"]==self.user_name:
+                if (timeRec.date()-since_date).days<0 and item["retweet_from"].lower()==self.user_name.lower():
                     return item_list,True
                 #if item["retweet_from"] !=self.user_name:
                 item_list.append(item)
 
-            last_label_tweet = label_tweet
+
             # 向下滚动到最下面的一条推文
             if last_label_tweet is not None :
                 self.driver.execute_script("arguments[0].scrollIntoView();", last_label_tweet)  # 滑动到推文标签
@@ -154,7 +154,6 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                 time.sleep(2)
             else:
                 flag=True
-                print(item["time"])
                 break
         return item_list,flag
 
@@ -186,11 +185,11 @@ def run(x):
 
 # ------------------- 单元测试 -------------------
 if __name__ == "__main__":
-    user_names = []
-    with open(file_path, "r") as fp:  # 读取待爬取用户用户名
-        for line in fp:
-            user_names.append(get_twitter_user_name(line.strip()))
-    fp.close()
+    user_names = ["senmarkkelly"]
+    # with open(file_path, "r") as fp:  # 读取待爬取用户用户名
+    #     for line in fp:
+    #         user_names.append(get_twitter_user_name(line.strip()))
+    # fp.close()
     if not os.path.isdir(datadir):
         os.mkdir(datadir)
     pool = Pool(pool_size)
