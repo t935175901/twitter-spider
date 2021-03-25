@@ -12,7 +12,7 @@ from config import *
 import datetime
 import os
 from openpyxl import workbook  # 写入Excel表所用
-flags=[]#标识是否爬取成功
+
 class SpiderTwitterAccountPost(tool.abc.SingleSpider):
     """
     Twitter账号推文爬虫
@@ -43,7 +43,17 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                 time.sleep(3)
                 pass
 
-
+        try:
+            while (1):
+                tryagain = self.driver.find_element_by_css_selector(
+                    "main>div>div> div> div> div> div:nth-child(2)> div> div> div> div> span")
+                if "出错了" in tryagain.text:
+                    self.driver.refresh()
+                    time.sleep(3)
+                else:
+                    break
+        except:
+            pass
         # 循环遍历外层标签
         tweet_id_set = set()
         while(1):
@@ -57,11 +67,11 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
             for label_tweet in temp:  # 定位到推文标签
 
                 item = {}
-                item["twitter_id"] = user_name
                 label = label_tweet.find_element_by_css_selector(
                     "article > div > div > div > div:nth-child(2) > div:"
                     "nth-child(2) > div:nth-child(1) > div > div > div:nth-child(1) > a")
                 # 读取推文ID
+
                 if pattern := re.search("[0-9]+$", label.get_attribute("href")):
                     item["tweet_id"] = pattern.group()
                 if "tweet_id" not in item:
@@ -79,8 +89,7 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                 try:
                     if label := label_tweet.find_element_by_css_selector(
                             "article > div > div > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a > div > div:nth-child(2) > div > span"):
-                        if self.user_name != label.text.replace("@", ""):
-                            item["retweet_from"] = label.text.replace("@", "")
+                        item["retweet_from"] = label.text.replace("@", "")
                 except:
                     item["retweet_from"]=""
                 # 解析推文发布时间
@@ -162,46 +171,57 @@ def run(x):
     #x=
     # user_name,
     # since_date,
-    # until_date]
-    driver = webdriver.Chrome()
-    datas=[]
+    # log]
     print("Start collecting tweets from {}:".format(x[0]))
-    wb = workbook.Workbook()  # 创建Excel对象
-    ws = wb.active  # 获取当前正在操作的表对象
-    # 往表中写入标题行,以列表形式写入！
-    ws.append(["tweet_id", "retweet_from","time","reply_to","text","replies","retweets", "likes","images"])
-    datas,flag = SpiderTwitterAccountPost(driver).running(x[0], x[1])
-    flags.append(flag)
-    for data in datas:
-        ws.append([data["tweet_id"],data["retweet_from"],data["time"],data["reply_to"],data["text"],data["replies"],data["retweets"],data["likes"],data["images"]])
-    driver.quit()
-    path=os.path.join(datadir,"tweet")
-    if not os.path.isdir(path):
-        os.mkdir(path)
-    file_path=os.path.join(path,'{}_{}_{}.xlsx'.format(x[0], x[1],today))
-    if os.path.exists(file_path):
-        os.remove(file_path)
-    wb.save(file_path)
-    print("Collection complete\n")
+    if x[2]=="TRUE":
+        flags.append("True")
+        print("Collected already\n")
+    else:
+        driver = webdriver.Chrome()
+        wb = workbook.Workbook()  # 创建Excel对象
+        ws = wb.active  # 获取当前正在操作的表对象
+        # 往表中写入标题行,以列表形式写入！
+        ws.append(["tweet_id", "retweet_from", "time", "reply_to", "text", "replies", "retweets", "likes", "images"])
+        datas,flag = SpiderTwitterAccountPost(driver).running(x[0], x[1])
+        flags.append(flag)
+        for data in datas:
+            ws.append([data["tweet_id"],data["retweet_from"],data["time"],data["reply_to"],data["text"],data["replies"],data["retweets"],data["likes"],data["images"]])
+        driver.quit()
+        path=os.path.join(datadir,"tweet")
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        file_path=os.path.join(path,'{}_{}_{}.xlsx'.format(x[0], x[1],today))
+        wb.save(file_path)
+        print("Collect complete\n")
 
 
 
+
+
+flags=[]#标识是否爬取成功
 # ------------------- 单元测试 -------------------
 if __name__ == "__main__":
-    user_names = ["senmarkkelly"]
-    # user_names = []
-    # with open(file_path, "r") as fp:  # 读取待爬取用户用户名
-    #     for line in fp:
-    #         user_names.append(get_twitter_user_name(line.strip()))
-    # fp.close()
-
+    user_names = []
+    logs=[]
+    with open(file_path, "r") as fp:  # 读取待爬取用户用户名
+        for line in fp:
+            temp=line.strip().replace("\t"," ").split("  ")
+            user_names.append(get_twitter_user_name(temp[0]))
+            logs.append(temp[1])
+    fp.close()
     if not os.path.isdir(datadir):
         os.mkdir(datadir)
     pool = Pool(pool_size)
-    combe = lambda user_names, since_date: list(zip(user_names, [since_date] * len(user_names)))
-    pool.map(run, combe(user_names,since_date))
+    combe = lambda user_names, since_date,logs: list(zip(user_names, [since_date] * len(user_names),logs))
+    pool.map(run, combe(user_names,since_date,logs))
     pool.close()
     pool.join()
+    temp=list(zip(user_names,flags))
+    with open(file_path, "w") as fp:  # 读取待爬取用户用户名
+        for x in temp:
+            fp.writelines(x)
+            fp.write("\n")
+    fp.close()
     print(flags)
 
 
