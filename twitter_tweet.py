@@ -57,11 +57,11 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
             for label_tweet in temp:  # 定位到推文标签
 
                 item = {}
+                item["twitter_id"] = user_name
                 label = label_tweet.find_element_by_css_selector(
                     "article > div > div > div > div:nth-child(2) > div:"
                     "nth-child(2) > div:nth-child(1) > div > div > div:nth-child(1) > a")
                 # 读取推文ID
-
                 if pattern := re.search("[0-9]+$", label.get_attribute("href")):
                     item["tweet_id"] = pattern.group()
                 if "tweet_id" not in item:
@@ -79,7 +79,8 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
                 try:
                     if label := label_tweet.find_element_by_css_selector(
                             "article > div > div > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a > div > div:nth-child(2) > div > span"):
-                        item["retweet_from"] = label.text.replace("@", "")
+                        if self.user_name != label.text.replace("@", ""):
+                            item["retweet_from"] = label.text.replace("@", "")
                 except:
                     item["retweet_from"]=""
                 # 解析推文发布时间
@@ -178,6 +179,8 @@ def run(x):
     if not os.path.isdir(path):
         os.mkdir(path)
     file_path=os.path.join(path,'{}_{}_{}.xlsx'.format(x[0], x[1],today))
+    if os.path.exists(file_path):
+        os.remove(file_path)
     wb.save(file_path)
     print("Collection complete\n")
 
@@ -186,10 +189,12 @@ def run(x):
 # ------------------- 单元测试 -------------------
 if __name__ == "__main__":
     user_names = ["senmarkkelly"]
+    # user_names = []
     # with open(file_path, "r") as fp:  # 读取待爬取用户用户名
     #     for line in fp:
     #         user_names.append(get_twitter_user_name(line.strip()))
     # fp.close()
+
     if not os.path.isdir(datadir):
         os.mkdir(datadir)
     pool = Pool(pool_size)
