@@ -5,53 +5,76 @@ import os
 import xlrd
 import operator
 
-path = "data/tweet"
+path = "tweet"
+
+##如果retweetfrom的人物不在人物表中，则retweetfrom设为本人id
+##如果replyTo的人物不在人物表中，则除去
+
+re.DEFAULT_RETRIES = 5
+s = re.session()
+s.keep_alive = False
 
 class UploadTweets:
     def upload(self):
         df = pd.read_csv("data.csv", usecols=[0,1])
-        print(df.head(5))
         twitterIds = df['twitterid'].values.tolist()
         twitterIds = [i.lower() for i in twitterIds]
         names = df['name'].values.tolist()
         # print(twitterIds, '\n', names)
 
         fs = os.listdir(path)
-        for file in fs:
-            try:
-                twitterId = file.split('_')[0].lower()
+        for (i, file) in enumerate(fs):
+            twitterId = file[:file.find('_2020-01-01')].lower()
+            if twitterId in twitterIds:
                 name = names[twitterIds.index(twitterId)]
-                print(file, name)
-                r = re.get('http://test.xuejun.ziqiang.net.cn/person/personByName?name='+name)
-                id = json.loads(r.text)['data']['id']
+            else:
+                print(twitterId, '  not in twitterList')
+                with open('notgood.txt', 'a') as fp:
+                    fp.write(file)
+                continue
+            r = re.get('http://test.xuejun.ziqiang.net.cn/person/personByName?name='+name)
+            id = json.loads(r.text)['data']['id']
 
-                tweets = read_xlsx(path+'/'+file)
-                for tweet in tweets:
-                    tweet['ownerId'] = int(id)
-                    if tweet['retweetFrom'].lower() == twitterId.lower():
-                        del tweet['retweetFrom']
-                    else:
-                        if tweet['retweetFrom'].lower() in twitterIds:
-                            retweetName = names[twitterIds.index(tweet['retweetFrom'].lower())]
-                            r = re.get('http://test.xuejun.ziqiang.net.cn/person/personByName?name='+retweetName)
-                            tweet['retweetFrom'] = int(json.load(r.text)['data']['id'])
-                        else:
-                            #creat_person()
-                            tweet['retweetFrom'] = int(id)
-                    if tweet['replyTo'].lower() in twitterIds:
-                        replyName = names[twitterIds.index(tweet['replyTo'].lower())]
-                        r = re.get('http://test.xuejun.ziqiang.net.cn/person/personByName?name='+replyName)
-                        tweet['replyTo'] = int(json.load(r.text)['data']['id'])
+            tweets = read_xlsx(path+'/'+file)
+            for tweet in tweets:
+                tweet['ownerId'] = int(id)
+                # print(tweet['retweetFrom'].lower(), twitterId.lower())
+                if tweet['retweetFrom'].lower() == twitterId.lower():
+                    del tweet['retweetFrom']
+                else:
+                    if tweet['retweetFrom'].lower() in twitterIds:
+                        retweetName = names[twitterIds.index(tweet['retweetFrom'].lower())]
+                        r = re.get('http://test.xuejun.ziqiang.net.cn/person/personByName?name='+retweetName)
+                        tweet['retweetFrom'] = int(json.loads(r.text)['data']['id'])
                     else:
                         #creat_person()
-                        tweet['replyTo'] = int(id)
+                        tweet['retweetFrom'] = int(id)
+                if tweet['replyTo'].lower() in twitterIds:
+                    replyName = names[twitterIds.index(tweet['replyTo'].lower())]
+                    r = re.get('http://test.xuejun.ziqiang.net.cn/person/personByName?name='+replyName)
+                    tweet['replyTo'] = int(json.loads(r.text)['data']['id'])
+                else:
+                    #creat_person()
+                    del tweet['replyTo']
 
-                headers = {'Content-Type': 'application/json'}
-                response = re.post(url='http://test.xuejun.ziqiang.net.cn/activity/addOrUpdateActivities', headers=headers, data=json.dumps(tweets))
-                print(json.loads(response.text))
+            headers = {'Content-Type': 'application/json'}
 
-            except:
-                print("读取推文文件失败")
+            long = 1000
+            data = []
+            flag = True
+            for j,tweet in enumerate(tweets):
+                if not j%long and j != 0:
+                    ##发送
+                    response = re.post(url='http://test.xuejun.ziqiang.net.cn/activity/addOrUpdateActivities',
+                                       headers=headers, data=json.dumps(data))
+                    if (json.loads(response.text)['code']):
+                        flag = False
+                        break
+                    data = []
+                data.append(tweet)
+
+            if flag:
+                print('count:', i, '   ', twitterId, 'Done')
 
 def creat_person():
     pass
