@@ -1,100 +1,529 @@
-ChuckGrassley
-HillaryClinton
-BorisJohnson
-BarackObama
-SpeakerPelosi
-JoeBiden
-KamalaHarris
-AOC
-BernieSanders
-SenWarren
-BillClinton
-mikepompeo
-MarshaBlackburn
-SenRonJohnson
-marcorubio
-tedcruz
-RepMattGaetz
-Nigel_Farage
-MittRomney
-pritipatel
-DominicRaab
-ChuckGrassley
-jaredpolis
-clairecmc
-GovChristie
-jahimes
-GovGaryJohnson
-helenzille
-bobbyjindal
-RepSteveIsrael
-JerryBrownGov
-neeratanden
-PeteButtigieg
-KenRoth
-SenSchumer
-SenatorDurbin
-SenatorMenendez
-SenJeffMerkley
-ChrisMurphyCT
-vali_nasr
-SenJohnKennedy
-laurenboebert
-RepMcGovern
-DrewPavlou
-mrbcyber
-SecBlinken
-SolomonYue
-SKinnock
-JohnBlaxland1
-SariArhoHavren
-Swamy39
-LHSummers
-RealPNavarro
-paulkrugman
-kaushikcbasu
-pdacosta
-AtifRMian
-dlacalle_IA
-econjared
-DeanBaker13
-C_Barraud
-stevenmnuchin1
-MattGrudnoff
-chrisjcondon
-joelight
-jeannasmialek
-RishiSunak
-nsitharaman
-A_Gurria
-WTODGAZEVEDO
-FP_Champagne
-LizEconomy
-S_Rabinovitch
-hancocktom
-HornbyLucy
-jarmiles
-KeithBradsher
-JamilAnderlini
-RosieBlau
-Lingling_Wei
-joshchin
-davidrdollar
-Trinhnomics
-catkngai
-larry_kudlow
-jeremythorpe
-JeffDSachs
-isaacstonefish
-choyleva
-ClaireJChu
-AnaSwanson
-ICAS_Zhang
-DerekScissors1
-steve0george
-BarbaraPongratz
-RebeccaArcesati
-m_huotari
-MatthewBGeraci
-ICASgupta
-NongHong_ICAS
+senshelby		true
+ttuberville		true
+lisamurkowski		true
+sendansullivan		true
+senatorsinema		true
+senmarkkelly		true
+johnboozman		true
+sentomcotton		true
+senfeinstein		true
+alexpadilla4ca		true
+senatorbennet		true
+hickenlooper		true
+senblumenthal		true
+chrismurphyct		true
+senatorcarper		true
+chriscoons		true
+senrubiopress		true
+senrickscott		true
+ossoff		true
+reverendwarnock		true
+brianschatz		true
+maziehirono		true
+mikecrapo		true
+senatorrisch		true
+senatordurbin		true
+senduckworth		true
+sentoddyoung		true
+senatorbraun		true
+chuckgrassley		true
+senjoniernst		true
+jerrymoran		true
+rogermarshallmd		true
+mcconnellpress		true
+randpaul		true
+senbillcassidy		true
+senjohnkennedy		true
+senatorcollins		true
+senangusking		true
+senatorcardin		true
+chrisvanhollen		true
+senwarren		true
+senmarkey		true
+senstabenow		true
+sengarypeters		true
+amyklobuchar		true
+tinasmithmn		true
+senatorwicker		true
+cindyhydesmith		true
+royblunt		true
+hawleymo		true
+senatortester		true
+stevedaines		true
+senatorfischer		true
+sensasse		true
+sencortezmasto		true
+senjackyrosen		true
+senatorshaheen		true
+senatorhassan		true
+senatormenendez		true
+corybooker		true
+senatorlujan		true
+martinheinrich		true
+senschumer		true
+sengillibrand		true
+senatorburr		true
+senthomtillis		true
+senjohnhoeven		true
+senkevincramer		true
+sensherrodbrown		true
+senrobportman		true
+jiminhofe		true
+senatorlankford		true
+ronwyden		true
+senjeffmerkley		true
+senbobcasey		true
+sentoomey		true
+senjackreed		true
+senwhitehouse		true
+lindseygrahamsc		true
+senatortimscott		true
+senjohnthune		true
+senatorrounds		true
+marshablackburn		true
+billhagertytn		true
+johncornyn		true
+tedcruz		true
+senmikelee		true
+mittromney		true
+senatorleahy		true
+berniesanders		true
+markwarner		true
+timkaine		true
+pattymurray		true
+senatorcantwell		true
+sen_joemanchin		true
+sencapito		true
+senronjohnson		true
+senatorbaldwin		true
+senjohnbarrasso		true
+senlummis		true
+repjerrycarl		true
+repbarrymoore		true
+repmikerogersal		true
+robert_aderholt		true
+repmobrooks		true
+usrepgarypalmer		true
+repterrisewell		true
+repdonyoung		true
+repamata		true
+repohalleran		true
+repkirkpatrick		true
+repraulgrijalva		true
+repgosar		true
+repandybiggsaz		true
+repdavid		true
+reprubengallego		true
+repdlesko		true
+repgregstanton		true
+reprickcrawford		true
+repfrenchhill		true
+rep_stevewomack		true
+repwesterman		true
+repdianadegette		true
+repjoeneguse		true
+repboebert		true
+repkenbuck		true
+repjasoncrow		true
+repperlmutter		true
+repdlamborn		true
+repjohnlarson		true
+repjoecourtney		true
+rosadelauro		true
+jahimes		true
+repjahanahayes		true
+replbr		true
+eleanornorton		true
+repbuddycarter		true
+sanfordbishop		true
+repdrewferguson		true
+rephankjohnson		true
+repnikema		true
+replucymcbath		true
+carolyn4ga7		true
+austinscottga08		true
+rep_clyde		true
+congressmanhice		true
+reploudermilk		true
+reprickallen		true
+repdavidscott		true
+repmtg		true
+repmrvan		true
+repwalorski		true
+repjimbanks		true
+repjimbaird		true
+repspartz		true
+repgregpence		true
+repandrecarson		true
+replarrybucshon		true
+reptrey		true
+repashleyhinson		true
+repmmm		true
+repcindyaxne		true
+repfeenstra		true
+repmann		true
+replaturner		true
+repdavids		true
+repronestes		true
+repjamescomer		true
+repguthrie		true
+repjohnyarmuth		true
+repthomasmassie		true
+rephalrogers		true
+repandybarr		true
+stevescalise		true
+reprichmond		true
+repclayhiggins		true
+repmikejohnson		true
+repgarretgraves		true
+chelliepingree		true
+repgolden		true
+repandyharrismd		true
+call_me_dutch		true
+repsarbanes		true
+repanthonybrown		true
+stenyhoyer		true
+repdavidtrone		true
+repkweisimfume		true
+repraskin		true
+reprichardneal		true
+repmcgovern		true
+reploritrahan		true
+repauchincloss		true
+repkclark		true
+sethmoulton		true
+reppressley		true
+replynch		true
+usrepkeating		true
+reptrentkelly		true
+repmichaelguest		true
+congpalazzo		true
+replamalfa		true
+rephuffman		true
+repgaramendi		true
+repmcclintock		true
+repthompson		true
+dorismatsui		true
+repbera		true
+jayobernolte		true
+repmcnerney		true
+repjoshharder		true
+repdesaulnier		true
+speakerpelosi		true
+repbarbaralee		true
+repspeier		true
+repswalwell		true
+repjimcosta		true
+reprokhanna		true
+repannaeshoo		true
+repzoelofgren		true
+repjimmypanetta		true
+repdavidvaladao		true
+repdevinnunes		true
+gopleader		true
+repcarbajal		true
+repmikegarcia		true
+repbrownley		true
+repjudychu		true
+repadamschiff		true
+repcardenas		true
+bradsherman		true
+reppeteaguilar		true
+gracenapolitano		true
+reptedlieu		true
+repjimmygomez		true
+normajtorres		true
+repraulruizmd		true
+repkarenbass		true
+replindasanchez		true
+repyoungkim		true
+reproybalallard		true
+repmarktakano		true
+kencalvert		true
+repmaxinewaters		true
+repbarragan		true
+repkatieporter		true
+reploucorrea		true
+replowenthal		true
+repsteel		true
+repmikelevin		true
+repdarrellissa		true
+repjuanvargas		true
+repscottpeters		true
+repsarajacobs		true
+dharshbargertn1		true
+timburchett		true
+repchuck		true
+desjarlaistn04		true
+repjimcooper		true
+repjohnrose		true
+repmarkgreen		true
+repdavidkustoff		true
+repcohen		true
+replouiegohmert		true
+dancrenshawtx		true
+vantaylortx		true
+fallonfortexas		true
+lancegooden		true
+repronwright		true
+repfletcher		true
+repkevinbrady		true
+repalgreen		true
+repmccaul		true
+augustpfluger		true
+repkaygranger		true
+ronnyjacksontx		true
+txrandy14		true
+repgonzalez		true
+vgescobar		true
+petesessions		true
+jacksonleetx18		true
+reparrington		true
+joaquincastrotx		true
+chiproytx		true
+sherifftnehls		true
+tonygonzales4tx		true
+bethvanduyne		true
+reprwilliams		true
+michaelcburgess		true
+repcloudtx		true
+repcuellar		true
+repsylviagarcia		true
+repebj		true
+judgejohncarter		true
+repcolinallred		true
+repveasey		true
+repfilemonvela		true
+replloyddoggett		true
+repbrianbabin		true
+repblakemoore		true
+repchrisstewart		true
+repjohncurtis		true
+burgessowens		true
+peterwelch		true
+staceyplaskett		true
+repbryansteil		true
+repmarkpocan		true
+repronkind		true
+repgwenmoore		true
+repfitzgerald		true
+repgrothman		true
+tomtiffanywi		true
+repgallagher		true
+liz_cheney		true
+repmattgaetz		true
+drnealdunnfl2		true
+kat_cammack		true
+reprutherfordfl		true
+repallawsonjr		true
+michaelgwaltz		true
+repstephmurphy		true
+congbillposey		true
+repdarrensoto		true
+repvaldemings		true
+repwebster		true
+repgusbilirakis		true
+charliecrist		true
+usrepkcastor		true
+repfranklin		true
+vernbuchanan		true
+repgregsteube		true
+repbrianmast		true
+repdonaldspress		true
+rephastingsfl		true
+reploisfrankel		true
+repteddeutch		true
+dwstweets		true
+repwilson		true
+mariodb		true
+mayorgimenez		true
+maelvirasalazar		true
+guamcongressman		true
+repedcase		true
+repkahele		true
+reprussfulcher		true
+congmikesimpson		true
+repbobbyrush		true
+reprobinkelly		true
+repmarienewman		true
+chuyforcongress		true
+repmikequigley		true
+seancasten		true
+repdannydavis		true
+congressmanraja		true
+janschakowsky		true
+repschneider		true
+repbillfoster		true
+repbost		true
+rodneydavis		true
+repunderwood		true
+repmarymiller		true
+repkinzinger		true
+repcheri		true
+replahood		true
+repjackbergman		true
+rephuizenga		true
+repmeijer		true
+repmoolenaar		true
+repdankildee		true
+repfredupton		true
+repwalberg		true
+repslotkin		true
+repandylevin		true
+replisamcclain		true
+rephaleystevens		true
+repdebdingell		true
+reprashida		true
+replawrence		true
+rephagedorn		true
+repangiecraig		true
+repdeanphillips		true
+bettymccollum04		true
+ilhan		true
+reptomemmer		true
+repfischbach		true
+reppetestauber		true
+benniegthompson		true
+coribush		true
+repannwagner		true
+repblaine		true
+rephartzler		true
+repcleaver		true
+repsamgraves		true
+usreplong		true
+jasonsmithmo		true
+reprosendale		true
+jefffortenberry		true
+repdonbacon		true
+repadriansmith		true
+repdinatitus		true
+markamodeinv2		true
+repsusielee		true
+rephorsford		true
+repchrispappas		true
+repanniekuster		true
+donaldnorcross		true
+repandykimnj		true
+senchrissmith		true
+repjoshg		true
+frankpallone		true
+repmalinowski		true
+repsires		true
+billpascrell		true
+repdonaldpayne		true
+repsherrill		true
+repbonnie		true
+robwittman		true
+elaineluriava		true
+bobbyscott		true
+repmceachin		true
+repbobgood		true
+repbencline		true
+repspanberger		true
+repdonbeyer		true
+repmgriffith		true
+repwexton		true
+gerryconnolly		true
+repdebhaaland		true
+benraylujan		true
+tomudall		true
+repleezeldin		true
+reptomsuozzi		true
+grace4ny		true
+aoc		true
+spmaloney		true
+paultonko		true
+claudiatenney		true
+reptomreed		true
+repjohnkatko		true
+repbrianhiggins		true
+repdavidrouzer		true
+reprichhudson		true
+repcawthorn		true
+reptedbudd		true
+repmullin		true
+tomcoleok04		true
+govinslee		true
+repricklarsen		true
+repnewhouse		true
+marcorubio		true
+repderekkilmer		true
+repadamsmith		true
+repstevechabot		true
+repbradwenstrup		true
+repbeatty		true
+jim_jordan		true
+boblatta		true
+repbilljohnson		true
+repbobgibbs		true
+warrendavidson		true
+repmarcykaptur		true
+repmiketurner		true
+repmarciafudge		true
+repbalderson		true
+reptimryan		true
+repdavejoyce		true
+repstevestivers		true
+repagonzalez		true
+repbonamici		true
+repbentz		true
+repblumenauer		true
+reppeterdefazio		true
+repschrader		true
+repbrianfitz		true
+repbrendanboyle		true
+repdwightevans		true
+repdean		true
+repmgs		true
+rephoulahan		true
+repsusanwild		true
+repcartwright		true
+repmeuser		true
+repscottperry		true
+repsmucker		true
+repfredkeller		true
+repjohnjoyce		true
+greschenthaler		true
+congressmangt		true
+mikekellypa		true
+repconorlamb		true
+usrepmikedoyle		true
+repjenniffer		true
+repcicilline		true
+langevinforri		true
+repnancymace		true
+repjoewilson		true
+repjeffduncan		true
+reptimmons		true
+repralphnorman		true
+whipclyburn		true
+reptomrice		true
+repdustyjohnson		true
+repmckinley		true
+repalexmooney		true
+repcarolmiller		true
+repgarbarino		true
+repkathleenrice		true
+repgregorymeeks		true
+nydiavelazquez		true
+repjeffries		true
+repyvetteclarke		true
+repjerrynadler		true
+nmalliotakis		true
+repmaloney		true
+repespaillat		true
+ritchietorres		true
+jamaalbowmanny		true
+mondairejones		true
+delgadoforny19		true
+elisestefanik		true
+repjoemorelle		true
+jacobsny27		true
+suzandelbene		true
+herrerabeutler		true
+cathymcmorris		true
+pramilajayapal		true
+repkimschrier		true
+stricklandforwa		true
+gkbutterfield		true
+deborahrossnc		true
