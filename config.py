@@ -14,10 +14,10 @@ from selenium import webdriver
 from urllib import parse
 from xlrd import open_workbook
 from openpyxl import workbook  # 写入Excel表所用
-#email = "ty_enh"
-email = "tangyu21330169"
-#登录邮箱，建议换成自己的
-password = "ty20000924"
+#email = ""
+email = ""
+#登录邮箱
+password = ""
 #密码
 file_path="user_names.txt"
 #待爬取用户文件路径
